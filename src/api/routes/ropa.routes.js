@@ -7,7 +7,7 @@ router.get('/', getAllRopas);
 router.get('/:id', getRopasById);
 router.post('/',postRopa);
 
-router.put('/:id',[isAuth],putRopa);
+router.put('/:id',putRopa);
 router.delete('/:id',deleteRopa);
 
 module.exports = router;

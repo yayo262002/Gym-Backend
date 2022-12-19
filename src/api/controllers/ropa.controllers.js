@@ -2,7 +2,7 @@ const Ropa = require('../model/ropa.model');
 
 const getAllRopas = async (req, res, next) => {
     try {
-        const ropas = await Ropa.find().populate("hombres")
+        const ropas = await Ropa.find().populate("hombres mujeres")
         return res.status(200).json(ropas);
     } catch (error) {
         return res.status(500).json(error) ;
