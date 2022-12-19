@@ -8,6 +8,6 @@ router.get('/', getAllHombres);
 router.get('/:id', getHombresById);
 router.post('/',  postHombre);
 router.put('/:id',[isAuth],putHombre);
-router.delete('/:id',[isAuth], deleteHombre);
+router.delete('/:id', deleteHombre);
 
 module.exports = router;

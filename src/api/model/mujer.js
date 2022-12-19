@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const HombresSchema = new Schema(
+const MujeresSchema = new Schema(
     {
         productName: {type: String, required: true},
-        photo: {type: Array, required: false},
+        photo: {type: Array, required: true},
         description:{type: String, required: false},
         talla: {type: Array, required: true},
         precio: {type: Array, required: true},
@@ -13,6 +13,6 @@ const HombresSchema = new Schema(
     }, 
 );
 
-const Hombre = mongoose.model('hombres', HombresSchema);
+const Mujer = mongoose.model('mujeres', MujeresSchema);
 
-module.exports = Hombre;
+module.exports = Mujer;

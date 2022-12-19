@@ -1,9 +1,13 @@
 const express = require('express');
 const {connect} = require('./src/utils/database')
 const suplementosRouter= require('./src/api/routes/suplemento.routes')
+const aminoacidosRouter= require('./src/api/routes/aminoacidos.routes')
+const creatinasRouter= require('./src/api/routes/creatinas.routes')
+const vitaminasRouter= require('./src/api/routes/vitaminas.routes')
 const proteinasRouter= require('./src/api/routes/proteinas.routes')
 const ropaRouter= require('./src/api/routes/ropa.routes')
 const hombreRouter= require('./src/api/routes/hombre.routes')
+const mujerRouter= require('./src/api/routes/mujer.routes')
 const dotenv = require('dotenv');
 const cors = require('cors');
 
@@ -33,8 +37,16 @@ connect();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/suplementos', suplementosRouter)
+app.use('/aminoacidos', aminoacidosRouter)
 app.use('/proteinas', proteinasRouter)
+app.use('/vitaminas', vitaminasRouter)
+app.use('/creatinas', creatinasRouter)
 app.use('/ropa', ropaRouter)
 app.use('/hombre', hombreRouter)
+
+
+
+app.use('/mujer', mujerRouter)
 // app.use('/users', usersRouter)
+
 app.listen(PORT,()=>console.log(`listening http://localhost:${PORT}`))
