@@ -16,7 +16,8 @@ const getProteinasById = async (req,res) => {
     } catch (error) {
         return res.status(500).json(error)
     }
-};
+}
+
 const postProteina = async (req, res, next) => {
     try {
        

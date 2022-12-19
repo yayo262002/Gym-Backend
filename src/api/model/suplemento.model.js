@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const SuplementoSchema = new Schema({
     tipo:{type: String, required: true},
-    proteinas: { type: Schema.Types.ObjectId, ref: "proteinas"}
+    proteinas: { type: Schema.Types.Array, ref: "proteinas"}
    
    
 });
