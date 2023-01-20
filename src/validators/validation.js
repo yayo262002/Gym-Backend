@@ -4,8 +4,10 @@ const validationEmail = (email) => {
 }
 
 const validationPassword  = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{5,20}$/; //REGEX EMAIL;
+    const regex = /[A-Za-z\d$@$!%*?&]{8,15}/; //REGEX password;
     return regex.test(String(password));
 }
+
+
 
 module.exports = { validationPassword, validationEmail };

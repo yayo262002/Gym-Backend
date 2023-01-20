@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { restart } = require('nodemon');
+
 
 const isAuth = (req, res, next) => {
     const authorization = req.headers.authorization;
@@ -20,7 +20,7 @@ const isAuth = (req, res, next) => {
         return res.status(500).json(error);
     }
 
-    next()
+    next();
 }
 
 module.exports = {isAuth}
