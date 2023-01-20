@@ -1,89 +1,110 @@
-const User = require('../model/users.model');
+const Users = require('../model/users.models');
 const bcrypt = require('bcrypt');
 const { validationPassword, validationEmail } = require('../../validators/validation');
-const {generateSign, verifyJwt} = require('../../jwt/jwt');
+const { generateSign } = require('../../jwt/jwt');
+
+const getAllUsers = async (req,res) => {
+    try {
+        const allUsers = await Users.find();
+        return res.status(200).json(allUsers)
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+};
+
+const getUsers = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const getUsers = await Users.findById(id);
+        return res.status(200).json(getUsers);
+    } catch (error) {
+        return res.status(500).json(error)
+    }
+};
+
+
+
 
 const register = async (req, res, next) => {
     try {
-        const newUser = new User(req.body);
-        if(!validationEmail(req.body.email)){
-            //console.log({code: 403, message: "Invalid email"})
-            res.status(403).send({code: 403, message: "Invalid email"});
+        // console.log(req.body);
+        const newUsers = new Users(req.body);
+        if(!validationEmail(req.body.userMail)){
+            console.log({code: 403, message: "Invalid email"})
+            res.status(403).send({code: 403, message: "Invalid email"})
             return next();
         }
         if(!validationPassword(req.body.password)){
-            res.status(403).send({code: 403, message: "Invalid password"});
+            console.log({code: 403, message: "Invalid password"})
+            res.status(403).send({code: 403, message: "Invalid password"})
             return next();
         }
-        newUser.password = bcrypt.hashSync(newUser.password, 10);
-        const createdUser = await newUser.save();
+        if(req.file){
+            console.log(newUsers.userImage);
+            newUsers.userImage = req.file.path
+        }
+        newUsers.password = bcrypt.hashSync(newUsers.password, 10);
+        const createdUser = await newUsers.save();
         return res.status(201).json(createdUser);
     } catch (error) {
         return res.status(500).json(error) ;
     }
 };
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
     try {
-        console.log(req.headers.authorization)
-        const userInfo = await User.findOne({email: req.body.email});
-        if(!userInfo){
-            return res.status(404).json("Not Found Email")
+        // console.log(req.headers.authorization)
+        const userInfo = await Users.findOne({userMail: req.body.userMail});
+        if (bcrypt.compareSync(req.body.password, userInfo.password)){          
+            const token = generateSign(userInfo._id, userInfo.userMail);
+            return res.status(200).json({token, userInfo});
+        } else {
+            return res.status(400).json({message: "Invalid password"});
         }
-
-        if(bcrypt.compareSync(req.body.password, userInfo.password)){            
-            // userInfo.password = null;
-            // console.log(userInfo)
-            const token = generateSign(userInfo._id, userInfo.email)
-            return res.status(200).json(token);
-        }else{
-            return res.status(400).json({message: "invalid password"});
-        }
-
-        // if(!userInfo){
-        //     return res.status(400).json({message: "invalid user"});
-        // }
     } catch (error) {
         return res.status(500).json(error) ;
     }
 };
 
-const logout = (req, res, next) => {
+const logout = (req, res) => {
     try {
-        return res.status(200).json({token: null})//????de donde se recoge token???
+        return res.status(200).json({token: null})
     } catch (error) {
-        return res.status(500).json(error) ;
+        return res.status(500).json(error);
     }
 };
 
-const getAllUsers = async (req, res, next) => {
-    try {
-        const allUsers = await User.find()
-        return res.status(200).json(allUsers)
-    } catch (error) {
-        return res.status(500).json(error)
-    }
-}
-
-const deleteUser = async (req, res, next) => {
+const putUsers = async (req,res, next) => {
     try {
         const {id} = req.params;
-        const user = await User.findByIdAndDelete(id);
-        return res.status(200).json("User deleted")
+        const putUsers = new Users(req.body);
+        putUsers._id = id;
+        const UsersDb = await Users.findByIdAndUpdate(id, putUsers, {new: true});
+        if (!UsersDb) {
+            return res.status(404).json({"message":"Entry not found"});
+        }
+        if(req.file){
+            putUsers.userImage = req.file.path
+        }
+        res.status(201).json(UsersDb);
+        return next();
+    } catch (error) {
+        res.status(500).json(error);
+        return next();
+    }
+};
+
+const deleteUsers = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const usersDb = await Users.findByIdAndDelete(id);
+        if (!usersDb) {
+            return res.status(404).json({"message":"Entry not found"});
+        }
+        return res.status(200).json(usersDb);
     } catch (error) {
         return res.status(500).json(error)
     }
-}
+};
 
-const deleteAllUsers = async (req, res, next) => {
-    try {
-        await User.collection.drop();
-        return res.status(200).json("Deleted all users!")
-    } catch (error) {
-       return res.staus(500).json(error) 
-    }
-}
-
-
-
-module.exports = {register, login, logout, getAllUsers, deleteUser, deleteAllUsers}
+module.exports = {getAllUsers, getUsers, register, login, logout, putUsers, deleteUsers};

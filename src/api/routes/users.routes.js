@@ -1,13 +1,20 @@
-// const express = require('express');
-// const {register, login, logout, getAllUsers, deleteUser, deleteAllUsers} = require('../controllers/users.controllers')
-// const router = express.Router();
-// const {isAuth} = require('../../middlewares/auth');
+const express = require('express');
+const upload = require('../../middlewares/upload.files');
+const {isAuth} = require('../../middlewares/auth');
 
-// router.post('/register', register)
-// router.post('/login', login)
-// router.post('/logout',[isAuth], logout)
-// router.delete('/removeusers',[isAuth] ,deleteAllUsers)
-// router.get('/', getAllUsers)
-// router.delete('/deleteuser/:id',[isAuth], deleteUser)
+const {getAllUsers, getUsers, register, login, logout, putUsers, deleteUsers} = require('../controllers/users.controllers');
 
-// module.exports = router;
+const router = express.Router();
+
+
+
+router.get('/', getAllUsers);
+router.get('/:id', getUsers);
+router.post('/register',upload.single('userImage'), register);
+router.post('/login', login);
+router.post('/logout', [isAuth], logout);
+router.put('/:id', upload.single('userImage'), putUsers);
+router.delete('/:id', deleteUsers);
+
+
+module.exports = router; 
